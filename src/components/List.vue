@@ -14,7 +14,7 @@
                     :color="department.color"
                     dark
                     hover
-                    :to="{ name: 'group', params: { department: department.value } }"
+                    :to="{ name: 'group', params: { department: department.nameJ } }"
                 >
                     <v-card-title
                         class="headline"

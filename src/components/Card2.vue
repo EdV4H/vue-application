@@ -1,296 +1,203 @@
 <template>
-    <v-container fluid>
+    <v-container>
+        <v-btn 
+            class="ma-2" 
+            outlined color="indigo" 
+            :to="{ name: 'group', params: { department: $route.params.department } }"
+        >
+            科目群一覧へ
+        </v-btn>
         <v-data-iterator
-            :items="items"
-            :items-per-page.sync="itemsPerPage"
-            :page="page"
+            :items="lectures"
             :search="search"
-            :sort-by="sortBy.toLowerCase()"
-            :sort-desc="sortDesc"
-            hide-default-footer
+            :sort-by="sortBy.value"
+            :sort-desc="sortBy.desc"
+            loading
+            loading-text="講義情報取得中..."
         >
             <template v-slot:header>
-                <v-toolbar
-                    flat
-                    class="mb-1"
-                >
-                    <v-text-field
-                    v-model="search"
-                    clearable
-                    flat
-                    solo-inverted
-                    hide-details
-                    prepend-inner-icon="search"
-                    label="Search"
-                    ></v-text-field>
-                        <template v-if="$vuetify.breakpoint.mdAndUp">
-                            <v-spacer></v-spacer>
-                            <v-select
+                <v-row>
+                    <v-col cols="12" md="7">
+                        <v-text-field
+                            v-model="search"
+                            cleav-model="search"
+                            clearable
+                            flat
+                            outlined
+                            dense
+                            hide-details
+                            prepend-inner-icon="search"
+                            label="Search"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="5">
+                        <v-select
                                 v-model="sortBy"
                                 flat
-                                solo-inverted
+                                outlined
+                                dense
                                 hide-details
                                 :items="keys"
+                                :item-value="values"
+                                :item-text="text"
                                 prepend-inner-icon="search"
                                 label="Sort by"
-                            ></v-select>
-                            <v-spacer></v-spacer>
-                            <v-btn-toggle
-                                v-model="sortDesc"
-                                mandatory
-                            >
-                                <v-btn
-                                large
-                                depressed
-                                color="blue"
-                                :value="false"
-                                >
-                                <v-icon>mdi-arrow-up</v-icon>
-                                </v-btn>
-                                <v-btn
-                                large
-                                depressed
-                                color="blue"
-                                :value="true"
-                                >
-                                <v-icon>mdi-arrow-down</v-icon>
-                                </v-btn>
-                            </v-btn-toggle>
-                        </template>
-                </v-toolbar>
+                        ></v-select>
+                    </v-col>
+                </v-row>
             </template>
 
             <template v-slot:default="props">
-                <v-row>
+                <v-row dense>
                     <v-col
-                    v-for="item in props.items"
-                    :key="item.name"
-                    cols="12"
-                    sm="6"
-                    md="4"
-                    lg="3"
+                        v-for="lecture in props.items"
+                        :key="lecture.index"
+                        cols="12" sm="6" md="6" lg="4"
                     >
-                        <v-card>
-                            <v-card-title class="subheading font-weight-bold">{{ item.name }}</v-card-title>
-
+                        <v-card
+                            hover
+                            min-width="300"
+                            :to="{ name: 'lecture_content', params: { department: $route.params.department, group: $route.params.group, lecture: lecture } }"
+                        >
+                            <v-card-title class="subheading font-weight-bold">{{ lecture.lecture_name }}</v-card-title>
+                            <v-card-subtitle>{{ lecture.teacher }}</v-card-subtitle>
                             <v-divider></v-divider>
-
                             <v-list dense>
-                                <v-list-item
-                                    v-for="(key, index) in filteredKeys"
-                                    :key="index"
-                                >
-                                    <v-list-item-content :class="{ 'blue--text': sortBy === key }">{{ key }}:</v-list-item-content>
-                                    <v-list-item-content class="align-end" :class="{ 'blue--text': sortBy === key }">{{ item[key.toLowerCase()] }}</v-list-item-content>
+                                <v-list-item>
+                                    <span class="text--lighten-2 caption mr-2">単位</span>
+                                    <v-list-item-content>
+                                        <v-rating
+                                                :value="lecture.credit"
+                                                color="amber"
+                                                dense
+                                                half-increments
+                                                readonly
+                                                size="14"
+                                        ></v-rating>
+                                    </v-list-item-content>
+                                    <span class="text--lighten-2 caption mr-2">内容</span>
+                                    <v-list-item-content>
+                                        <v-rating
+                                                :value="lecture.content"
+                                                color="amber"
+                                                dense
+                                                half-increments
+                                                readonly
+                                                size="14"
+                                        ></v-rating>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-chip-group
+                                        column
+                                        active-class="primary--text"
+                                    >
+                                        <v-chip 
+                                            v-for="tag in lecture.tags"
+                                            :key="tag"
+                                            x-small
+                                            disabled
+                                        >
+                                            {{ tag }}
+                                        </v-chip>
+                                    </v-chip-group>
                                 </v-list-item>
                             </v-list>
+                            
                         </v-card>
                     </v-col>
                 </v-row>
             </template>
 
             <template v-slot:footer>
-                <v-row class="mt-2" align="center" justify="center">
-                    <span class="grey--text">Items per page</span>
-                    <v-menu offset-y>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                            dark
-                            text
-                            color="primary"
-                            class="ml-2"
-                            v-on="on"
-                            >
-                            {{ itemsPerPage }}
-                            <v-icon>mdi-chevron-down</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-item
-                            v-for="(number, index) in itemsPerPageArray"
-                            :key="index"
-                            @click="updateItemsPerPage(number)"
-                            >
-                            <v-list-item-title>{{ number }}</v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-
-                    <v-spacer></v-spacer>
-
-                    <span
-                    class="mr-4
-                    grey--text"
-                    >
-                    Page {{ page }} of {{ numberOfPages }}
-                    </span>
-                    <v-btn
-                    fab
-                    dark
-                    color="blue darken-3"
-                    class="mr-1"
-                    @click="formerPage"
-                    >
-                    <v-icon>mdi-chevron-left</v-icon>
-                    </v-btn>
-                    <v-btn
-                    fab
-                    dark
-                    color="blue darken-3"
-                    class="ml-1"
-                    @click="nextPage"
-                    >
-                    <v-icon>mdi-chevron-right</v-icon>
-                    </v-btn>
-                </v-row>
+                <!-- <v-pagination
+                    v-model="page"
+                    :length="length"
+                    :total-visible="7"
+                    @input = "pageChange"
+                ></v-pagination> -->
             </template>
         </v-data-iterator>
     </v-container>
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        itemsPerPageArray: [4, 8, 12],
-        search: '',
-        filter: {},
-        sortDesc: false,
-        page: 1,
-        itemsPerPage: 4,
-        sortBy: 'name',
-        keys: [
-          'Name',
-          'Calories',
-          'Fat',
-          'Carbs',
-          'Protein',
-          'Sodium',
-          'Calcium',
-          'Iron',
-        ],
-        items: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            sodium: 87,
-            calcium: '14%',
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            sodium: 129,
-            calcium: '8%',
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            sodium: 337,
-            calcium: '6%',
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            sodium: 413,
-            calcium: '3%',
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            sodium: 327,
-            calcium: '7%',
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            sodium: 50,
-            calcium: '0%',
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            sodium: 38,
-            calcium: '0%',
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            sodium: 562,
-            calcium: '0%',
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            sodium: 326,
-            calcium: '2%',
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            sodium: 54,
-            calcium: '12%',
-            iron: '6%',
-          },
-        ],
-      }
-    },
-    computed: {
-      numberOfPages () {
-        return Math.ceil(this.items.length / this.itemsPerPage)
-      },
-      filteredKeys () {
-        return this.keys.filter(key => key !== `Name`)
-      },
+import axios from 'axios'
+export default {
+    data() {
+        return {
+            search: '',
+            filter: {},
+            //page: 1,
+            //itemsPerPage: 1,
+            //itemsPerPageArray: [1, 4, 8, 16],
+            //length: 0,
+            sortBy: { value: 'lecture_name', desc: true },
+            lectures: [],
+            keys: [
+                //{
+                //     values: { value: 'lecture_name', desc: false },
+                //     text: '講義名昇順'
+                // },
+                // {
+                //     values: { value: 'lecture_name', desc: true },
+                //     text: '講義名降順'
+                // },
+                // {
+                //     values: { value: 'teacher', desc: false },
+                //     text: '講師名昇順'
+                // },
+                // {
+                //     values: { value: 'teacher', desc: true },
+                //     text: '講師名降順'
+                // },
+                {
+                    value: { value: 'credit', desc: false },
+                    text: '楽単度昇順',
+                },
+                {
+                    value: { value: 'credit', desc: true },
+                    text: '楽単度降順',
+                },
+                {
+                    value: { value: 'content', desc: false },
+                    text: '内容度昇順',
+                },
+                {
+                    value: { value: 'content', desc: true },
+                    text: '内容度降順',
+                },
+            ],
+        }
     },
     methods: {
-      nextPage () {
-        if (this.page + 1 <= this.numberOfPages) this.page += 1
-      },
-      formerPage () {
-        if (this.page - 1 >= 1) this.page -= 1
-      },
-      updateItemsPerPage (number) {
-        this.itemsPerPage = number
-      },
+        endpoint: function() {
+            return "https://9r8zwtxy15.execute-api.us-east-2.amazonaws.com/prod/lectures"
+            //return "http://dummy.restapiexample.com/api/v1/employees"
+        },
     },
-  }
+    mounted: function () {
+        axios
+            .get(this.endpoint())
+            .then(res => {
+                this.lectures = res.data.Items;
+                this.length = Math.ceil(this.lectures.length / this.itemsPerPage);
+            })
+            .catch(function () {
+                this.lectures = new Array(99).fill().map((v,i)=> {
+                    return {
+                        id: i,
+                        //color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+                        color: "blue",
+                        lecture_name: 'Sample Lecture' + (i+1),
+                        teacher: 'Sample Teacher' + (i+1),
+                        credit: Math.random() * 6,
+                        content: Math.random() * 6,
+                        tags: ['出席あり', 'レジュメ', '試験あり', 'プレゼンあり', '期末レポ',],
+                    };
+                });
+            });
+
+    }
+}
 </script>

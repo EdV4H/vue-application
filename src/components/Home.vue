@@ -27,6 +27,7 @@
                 <v-btn
                   color="orange"
                   text
+                  to="/register_lecture"
                 >
                   登録する
                 </v-btn>
