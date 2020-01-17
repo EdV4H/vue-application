@@ -10,7 +10,7 @@
         <v-data-iterator
             :items="lectures"
             :search="search"
-            :sort-by="sortBy.value"
+            :sort-by="sortBy.sort"
             :sort-desc="sortBy.desc"
             loading
             loading-text="講義情報取得中..."
@@ -38,7 +38,7 @@
                                 dense
                                 hide-details
                                 :items="keys"
-                                :item-value="values"
+                                :item-value="value"
                                 :item-text="text"
                                 prepend-inner-icon="search"
                                 label="Sort by"
@@ -96,7 +96,6 @@
                                             v-for="tag in lecture.tags"
                                             :key="tag"
                                             x-small
-                                            disabled
                                         >
                                             {{ tag }}
                                         </v-chip>
@@ -132,7 +131,7 @@ export default {
             //itemsPerPage: 1,
             //itemsPerPageArray: [1, 4, 8, 16],
             //length: 0,
-            sortBy: { value: 'lecture_name', desc: true },
+            sortBy: { sort: 'lecture_name', desc: true },
             lectures: [],
             keys: [
                 //{
@@ -152,27 +151,38 @@ export default {
                 //     text: '講師名降順'
                 // },
                 {
-                    value: { value: 'credit', desc: false },
+                    value: { sort: 'credit', desc: false },
                     text: '楽単度昇順',
                 },
                 {
-                    value: { value: 'credit', desc: true },
+                    value: { sort: 'credit', desc: true },
                     text: '楽単度降順',
                 },
                 {
-                    value: { value: 'content', desc: false },
+                    value: { sort: 'content', desc: false },
                     text: '内容度昇順',
                 },
                 {
-                    value: { value: 'content', desc: true },
+                    value: { sort: 'content', desc: true },
                     text: '内容度降順',
                 },
             ],
         }
     },
     methods: {
+        valueToString: function(value) {
+            if(value === 'pse') return "政治経済学部"
+            if(value === 'edu') return "教育学部"
+            if(value === 'fse') return "基幹理工学部"
+
+            if(value === 'eng') return "英語"
+            if(value === 'second') return "第二外国語"
+            if(value === 'common') return "共通科目"
+
+            else return value
+        },
         endpoint: function() {
-            return "https://9r8zwtxy15.execute-api.us-east-2.amazonaws.com/prod/lectures"
+            return "https://jze0k0dn7c.execute-api.ap-northeast-1.amazonaws.com/prod/lectures"
             //return "http://dummy.restapiexample.com/api/v1/employees"
         },
     },
@@ -180,7 +190,10 @@ export default {
         axios
             .get(this.endpoint())
             .then(res => {
-                this.lectures = res.data.Items;
+                // this.lectures = res.data.Items;
+                this.lectures = res.data.Items
+                    .filter(x => x.department === this.valueToString(this.$route.params.department))
+                    .filter(x => x.group === this.valueToString(this.$route.params.group));
                 this.length = Math.ceil(this.lectures.length / this.itemsPerPage);
             })
             .catch(function () {
@@ -197,7 +210,6 @@ export default {
                     };
                 });
             });
-
-    }
+    },
 }
 </script>

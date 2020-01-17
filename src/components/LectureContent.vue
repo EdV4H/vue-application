@@ -4,7 +4,7 @@
             <v-btn
               class="ma-2"
               outlined color="indigo"
-              :to="{ name: 'card', params: { department: $route.params.department, group: $route.params.group } }"
+              :to="{ name: 'card2', params: { department: $route.params.department, group: $route.params.group } }"
             >
                 講義一覧へ
             </v-btn>
@@ -25,7 +25,6 @@
                         v-for="tag in lecture.tags"
                         :key="tag"
                         small
-                        disabled
                     >
                         {{ tag }}
                     </v-chip>
@@ -33,34 +32,63 @@
                 <v-divider></v-divider> 
             </v-card-text>
             <v-card-subtitle>レビュー</v-card-subtitle>
+            <v-spacer></v-spacer>
+            <v-btn
+              class="ma-2"
+              outlined color="indigo"
+              :to="{ name: 'card2', params: { department: $route.params.department, group: $route.params.group } }"
+            >
+                レビューを書く
+            </v-btn>
             <v-card-text
                 v-for="review in reviews"
                 :key="review.index"
             >
                 <v-list-item three-line>
-                    <v-avatar color="grey" class="mr-4"></v-avatar>
+                    <!-- <v-avatar color="grey" class="mr-4"></v-avatar> -->
                     <v-list-item-content>
                         <v-list-item-titile class="title">{{ review.name }}</v-list-item-titile>
                         <v-list-item-subtitle>{{ review.department }}</v-list-item-subtitle>
-                        <v-rating
-                                :value="review.credit"
-                                color="amber"
-                                dense
-                                half-increments
-                                readonly
-                                size="14"
-                        ></v-rating>
+                        <v-row justify="start" dense>
+                            <v-col cols="auto">
+                                <span class="text--lighten-2 caption mr-2">単位</span>
+                            </v-col>
+                            <v-col cols="auto">
+                                <v-rating
+                                        :value="lecture.credit"
+                                        color="amber"
+                                        dense
+                                        half-increments
+                                        readonly
+                                        size="14"
+                                ></v-rating>
+                            </v-col>
+                            <v-col cols="auto">    
+                                <span class="text--lighten-2 caption mr-2">内容</span>
+                            </v-col>
+                            <v-col>
+                                <v-rating
+                                        :value="lecture.content"
+                                        color="amber"
+                                        dense
+                                        half-increments
+                                        readonly
+                                        size="14"
+                                ></v-rating>
+                            </v-col>
+                        </v-row>    
                     </v-list-item-content>
                     <v-list-item-action>
-                        <v-bottom-navigation
-                            grow
-                            
-                        >
-                            <v-btn text icon color="" @click="like(review.id)">
-                                <span>{{ review.like }}</span>
-                                <v-icon>mdi-thumb-up</v-icon>
-                            </v-btn>
-                        </v-bottom-navigation>    
+                        <v-row dense align-content="end">
+                            <v-col aria-flowto="end">
+                                <v-btn text icon color="" @click="like(review.id)">
+                                    <v-icon>mdi-thumb-up</v-icon>
+                                </v-btn>
+                            </v-col>
+                            <v-col align-self="center">   
+                                <span class="text--lighten-2 caption mr-2">{{ review.like }}</span>
+                            </v-col>
+                        </v-row>
                     </v-list-item-action>
                 </v-list-item>
                 <v-list-item>{{ review.text }}</v-list-item>
@@ -70,7 +98,7 @@
 </template>
 
 <script>
-//import axios from 'axios';
+// import axios from 'axios';
 export default {
     data () {
         return {
@@ -100,6 +128,17 @@ export default {
         }
     },
     methods: {
+        valueToString: function(value) {
+            if(value === 'pse') return "政治経済学部"
+            if(value === 'edu') return "教育学部"
+            if(value === 'fse') return "基幹理工学部"
+
+            if(value === 'eng') return "英語"
+            if(value === 'second') return "第二外国語"
+            if(value === 'common') return "共通科目"
+
+            else return value
+        },
         like: function (value) {
             this.reviews[this.getIndex(value, this.reviews, 'id')].like++;
         },
@@ -108,18 +147,18 @@ export default {
             return -1;
         },
         endpoint: function() {
-            return "https://9r8zwtxy15.execute-api.us-east-2.amazonaws.com/prod/lectures"
+            return "https://jze0k0dn7c.execute-api.ap-northeast-1.amazonaws.com/prod/lectures"
         },
     },
     // mounted: function () {
     //     axios
-    //         .get(this.endpoint(), {
-    //             params: {
-    //                 lecture_name: this.$route.params.lecture,
-    //             }
-    //         })
+    //         .get(this.endpoint())
     //         .then(res => {
-    //             this.lecture_name = res.data.Items[0].lecture_name;
+    //             // this.lectures = res.data.Items;
+    //             this.lecture = res.data.Items
+    //                 .filter(x => x.department === this.valueToString(this.$route.params.department))
+    //                 .filter(x => x.group === this.valueToString(this.$route.params.group))
+    //                 .filter(x => x.lecture_name === this.$route.params.lecture);
     //         });
     // }
 }

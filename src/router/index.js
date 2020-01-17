@@ -6,8 +6,11 @@ import Group from '@/components/Group';
 import Lecture from '@/components/Lecture';
 import Card from '@/components/Card';
 import Card2 from '@/components/Card2';
-import RegisterLecture from '@/components/RegisterLecture'
-import LectureContent from '@/components/LectureContent'
+import RegisterLecture from '@/components/RegisterLecture';
+import LectureContent from '@/components/LectureContent';
+
+import ClubCategory from '@/components/Club/Category';
+import ClubList from '@/components/Club/ClubList'
 
 Vue.use(Router);
 
@@ -25,12 +28,12 @@ export default new Router ({
             component: List
         },
         {
-            path: '/group',
+            path: '/:department/group',
             name: 'group',
             component: Group
         },
         {
-            path: '/lecture',
+            path: '/:department/:group/lecture',
             name: 'lecture',
             component: Lecture
         },
@@ -40,7 +43,7 @@ export default new Router ({
             component: Card
         },
         {
-            path: '/card2',
+            path: '/:department/:group/card2',
             name: 'card2',
             component: Card2
         },
@@ -50,9 +53,19 @@ export default new Router ({
             component: RegisterLecture
         },
         {
-            path: '/lecture_content',
+            path: '/:department/:group/:lecture/lecture_content',
             name: 'lecture_content',
             component: LectureContent
-        }
+        },
+        {
+            path: '/club/category',
+            name: 'club_category',
+            component: ClubCategory
+        },
+        {
+            path: '/club/:category/club_list',
+            name: 'club_list',
+            component: ClubList
+        },
     ]
 });

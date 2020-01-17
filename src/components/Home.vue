@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-row dense>
-          <v-col cols="6">
+          <v-col cols="12" lg="6">
             <v-card
               class="mx-auto"
             >
@@ -34,7 +34,7 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" lg="6">
             <v-card
               class="mx-auto"
             >
@@ -52,6 +52,7 @@
                 <v-btn
                   color="orange"
                   text
+                  to="/club/category"
                 >
                   探す
                 </v-btn>

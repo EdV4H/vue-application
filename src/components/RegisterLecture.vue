@@ -184,7 +184,7 @@ export default {
             this.tags = []
         },
         endpoint: function () {
-            return "https://9r8zwtxy15.execute-api.us-east-2.amazonaws.com/prod/lectures"
+            return "https://jze0k0dn7c.execute-api.ap-northeast-1.amazonaws.com/prod/lectures"
         },
     }
 }

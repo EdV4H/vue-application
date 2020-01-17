@@ -7,26 +7,25 @@
         >
             学部一覧へ
         </v-btn>
-        <v-btn 
+        <!-- <v-btn 
             class="ma-2"
             outlined color="indigo"
             :to="{ name: 'card2', params: { department: $route.params.department } }"    
         >
             カード一覧へ
-        </v-btn>
+        </v-btn> -->
         <v-row dense>
             <v-col
                 v-for="(group, i) in getGroup($route.params.department)"
                 :key="i"
                 cols="12" sm="6" md="4" lg="3"
             >
-                <!-- <router-link :to="{ name: 'lecture', params: { group: group.value, department: $route.params.department } }" tag="b"> -->
                 <v-card
                     height="90"
                     :color="group.color"
                     dark
                     hover
-                    :to="{ name: 'card', params: { group: group.name, department: $route.params.department } }"
+                    :to="{ name: 'card2', params: { group: group.value, department: $route.params.department } }"
                 >
                     <v-card-title
                         class="headline"
@@ -34,7 +33,6 @@
 
                     <v-card-subtitle v-text="group.description"></v-card-subtitle>
                 </v-card>
-                <!-- </router-link> -->
             </v-col>
         </v-row>
     </v-container>
@@ -106,9 +104,12 @@ export default {
     }),
     methods: {
         getGroup: function (value) {
-            if (value==='政治経済学部') return this.pse
-            if (value==='教育学部') return this.edu
-            if (value==='基幹理工学部') return this.fse
+            // if (value==='政治経済学部') return this.pse
+            // if (value==='教育学部') return this.edu
+            // if (value==='基幹理工学部') return this.fse
+            if (value==='pse') return this.pse
+            if (value==='edu') return this.edu
+            if (value==='fse') return this.fse
         }
     },
 }
