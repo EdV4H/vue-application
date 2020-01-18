@@ -15,6 +15,21 @@
             loading-text="サークル情報取得中"
         >
             <template v-slot:header>
+                <v-row>
+                    <v-col cols="12">
+                        <v-text-field
+                            v-model="search"
+                            cleav-model="search"
+                            clearable
+                            flat
+                            outlined
+                            dense
+                            hide-details
+                            prepend-inner-icon="search"
+                            label="Search"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
             </template>
 
             <template v-slot:default="props">

@@ -16,9 +16,9 @@
                     hover
                     :to="{ name: 'club_list', params: { category: category.value } }"
                 >
-                    <v-card-title class="display-1">
+                    <v-card-title class="headline">
                         {{ category.name }}
-                        <v-icon x-large>mdi-tennis</v-icon>
+                        <v-icon>mdi-tennis</v-icon>
                     </v-card-title>
                 </v-card>
             </v-col> 
