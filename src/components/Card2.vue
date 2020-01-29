@@ -38,8 +38,6 @@
                                 dense
                                 hide-details
                                 :items="keys"
-                                :item-value="value"
-                                :item-text="text"
                                 prepend-inner-icon="search"
                                 label="Sort by"
                         ></v-select>
@@ -57,7 +55,7 @@
                         <v-card
                             hover
                             min-width="300"
-                            :to="{ name: 'lecture_content', params: { department: $route.params.department, group: $route.params.group, lecture: lecture } }"
+                            :to="{ name: 'lecture_content', params: { department: $route.params.department, group: $route.params.group, lecture: lecture, lecture_name: lecture.lecture_name } }"
                         >
                             <v-card-title class="subheading font-weight-bold">{{ lecture.lecture_name }}</v-card-title>
                             <v-card-subtitle>{{ lecture.teacher }}</v-card-subtitle>

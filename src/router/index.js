@@ -53,7 +53,7 @@ export default new Router ({
             component: RegisterLecture
         },
         {
-            path: '/:department/:group/:lecture/lecture_content',
+            path: '/:department/:group/:lecture/:lecture_name/lecture_content',
             name: 'lecture_content',
             component: LectureContent
         },
