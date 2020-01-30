@@ -42,6 +42,7 @@
                         <v-card
                             hover
                             min_width="300"
+                            :to="{ name: 'club_content', params: { category: $route.params.category, id: club.id } }"
                         >
                             <v-img
                                 class="white--text align-end"
@@ -100,8 +101,11 @@ export default {
             .get(this.endpoint())
             .then(res => {
                 // this.lectures = res.data.Items;
-                this.clubs = res.data.Items
-                    .filter(x => x.category === this.valueToString(this.$route.params.category))
+                if (this.$route.params.category === 'all') this.clubs = res.data.Items;
+                else {
+                    this.clubs = res.data.Items
+                    .filter(x => x.category === this.$route.params.category)
+                }
             });
     },
 }

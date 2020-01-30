@@ -11,6 +11,8 @@ import LectureContent from '@/components/LectureContent';
 
 import ClubCategory from '@/components/Club/Category';
 import ClubList from '@/components/Club/ClubList'
+import ClubContent from '@/components/Club/ClubContent'
+import RegisterClub from '@/components/Club/RegisterClub'
 
 Vue.use(Router);
 
@@ -66,6 +68,16 @@ export default new Router ({
             path: '/club/:category/club_list',
             name: 'club_list',
             component: ClubList
+        },
+        {
+            path: '/club/:category/:id/club_content',
+            name: 'club_content',
+            component: ClubContent
+        },
+        {
+            path: '/register_club',
+            name: 'register_club',
+            component: RegisterClub
         },
     ]
 });

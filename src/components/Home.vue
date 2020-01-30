@@ -60,6 +60,7 @@
                 <v-btn
                   color="orange"
                   text
+                  to="/register_club"
                 >
                   登録する
                 </v-btn>
